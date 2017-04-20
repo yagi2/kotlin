@@ -79,7 +79,7 @@ fun createModuleResolverProvider(
                 IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
             },
             modulesContent, jvmPlatformParameters,
-            IdeaEnvironment, builtIns,
+            IdeaEnvironment, { builtIns },
             delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
             analysisSettings.sdk?.let { SdkInfo(project, it) },
             packageOracleFactory = project.service<IdePackageOracleFactory>(),
