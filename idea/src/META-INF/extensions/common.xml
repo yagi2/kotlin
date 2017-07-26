@@ -47,5 +47,7 @@
                         interface="org.jetbrains.kotlin.script.ScriptHelper"/>
         <extensionPoint name="completionInformationProvider"
                         interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
+        <extensionPoint name="gradleFrameworkSupport"
+                        interface="org.jetbrains.kotlin.gradle.frameworkSupport.GradleFrameworkSupportProvider"/>
     </extensionPoints>
 </idea-plugin>
