@@ -362,6 +362,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                         athrow()
                     })
                 }
+                methodNode.maxStack = methodNode.maxStack + 1
             }
 
         }
