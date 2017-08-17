@@ -60,6 +60,8 @@ class InterfaceImplBodyCodegen(
     }
 
     override fun generateSyntheticParts() {
+        generatePropertyMetadataArrayFieldIfNeeded(defaultImplType)
+
         for (memberDescriptor in descriptor.defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
@@ -178,9 +180,5 @@ class InterfaceImplBodyCodegen(
             }
             return super.newMethod(origin, access, name, desc, signature, exceptions)
         }
-    }
-
-    override fun generateSyntheticPartsBeforeBody() {
-        generatePropertyMetadataArrayFieldIfNeeded(defaultImplType)
     }
 }

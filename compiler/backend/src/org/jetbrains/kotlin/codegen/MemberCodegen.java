@@ -134,17 +134,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     public void generate() {
         generateDeclaration();
 
-        boolean shouldGenerateSyntheticParts =
-                !(element instanceof KtClassOrObject) ||
-                state.getGenerateDeclaredClassFilter().shouldGenerateClassMembers((KtClassOrObject) element);
-
-        if (shouldGenerateSyntheticParts) {
-            generateSyntheticPartsBeforeBody();
-        }
-
         generateBody();
 
-        if (shouldGenerateSyntheticParts) {
+        if (!(element instanceof KtClassOrObject) ||
+            state.getGenerateDeclaredClassFilter().shouldGenerateClassMembers((KtClassOrObject) element)) {
             generateSyntheticParts();
         }
 
@@ -153,9 +146,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
 
         done();
-    }
-
-    protected void generateSyntheticPartsBeforeBody() {
     }
 
     protected abstract void generateDeclaration();
