@@ -65,7 +65,8 @@ import org.gradle.util.GradleVersion;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.gradle.frameworkSupport.BuildScriptDataBuilder;
+import org.jetbrains.kotlin.gradle.frameworkSupport.KotlinBuildScriptDataBuilder;
+import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
@@ -87,7 +88,7 @@ public class GradleWithKotlinDSLModuleBuilder extends AbstractExternalModuleBuil
   private static final String TEMPLATE_GRADLE_SETTINGS = "Gradle Settings.gradle";
   private static final String TEMPLATE_GRADLE_SETTINGS_MERGE = "Gradle Settings merge.gradle";
   private static final String TEMPLATE_GRADLE_BUILD_WITH_WRAPPER = "Gradle Build Script with wrapper.gradle";
-  private static final String DEFAULT_TEMPLATE_GRADLE_BUILD = "Gradle Build Script.gradle";
+  private static final String DEFAULT_TEMPLATE_GRADLE_BUILD = "Gradle Kotlin DSL Build Script.gradle";
 
   private static final String TEMPLATE_ATTRIBUTE_PROJECT_NAME = "PROJECT_NAME";
   private static final String TEMPLATE_ATTRIBUTE_MODULE_PATH = "MODULE_PATH";
@@ -96,8 +97,8 @@ public class GradleWithKotlinDSLModuleBuilder extends AbstractExternalModuleBuil
   private static final String TEMPLATE_ATTRIBUTE_MODULE_GROUP = "MODULE_GROUP";
   private static final String TEMPLATE_ATTRIBUTE_MODULE_VERSION = "MODULE_VERSION";
   private static final String TEMPLATE_ATTRIBUTE_GRADLE_VERSION = "GRADLE_VERSION";
-  private static final Key<BuildScriptDataBuilder> BUILD_SCRIPT_DATA =
-    Key.create("gradle.module.buildScriptData");
+  private static final Key<KotlinBuildScriptDataBuilder> BUILD_SCRIPT_DATA =
+    Key.create("gradle.module.kotlinBuildScriptData");
 
   private WizardContext myWizardContext;
 
@@ -201,7 +202,7 @@ public class GradleWithKotlinDSLModuleBuilder extends AbstractExternalModuleBuil
 
     if (gradleBuildFile != null) {
       modifiableRootModel.getModule().putUserData(
-        BUILD_SCRIPT_DATA, new BuildScriptDataBuilder(gradleBuildFile));
+        BUILD_SCRIPT_DATA, new KotlinBuildScriptDataBuilder(gradleBuildFile));
     }
   }
 
@@ -302,7 +303,7 @@ public class GradleWithKotlinDSLModuleBuilder extends AbstractExternalModuleBuil
   @Nullable
   private VirtualFile setupGradleBuildFile(@NotNull VirtualFile modelContentRootDir)
     throws ConfigurationException {
-    final VirtualFile file = getOrCreateExternalProjectConfigFile(modelContentRootDir.getPath(), GradleConstants.DEFAULT_SCRIPT_NAME);
+    final VirtualFile file = getOrCreateExternalProjectConfigFile(modelContentRootDir.getPath(), GradleKotlinDSLConstants.DEFAULT_SCRIPT_NAME);
 
     if (file != null) {
       final String templateName = getExternalProjectSettings().getDistributionType() == DistributionType.WRAPPED

@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.gradle.GradleWithKotlinDSLModuleBuilder;
+import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
 
 import javax.swing.*;
 
