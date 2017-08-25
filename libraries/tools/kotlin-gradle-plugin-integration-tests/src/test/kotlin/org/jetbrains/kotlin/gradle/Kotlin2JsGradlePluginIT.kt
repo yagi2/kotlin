@@ -223,6 +223,9 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("runRhino") {
             println(output)
             assertSuccessful()
+            val pathPrefix = "mainProject/build/min"
+            assertFileExists("$pathPrefix/exampleapp.js.map")
+            assertFileExists("$pathPrefix/examplelib.js.map")
         }
     }
 

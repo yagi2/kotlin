@@ -193,7 +193,8 @@ class FunctionReader(
         }
 
         val position = info.offsetToSourceMapping[offset]
-        val function = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
+        val function = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram())) ?:
+                       return null
         val moduleReference = moduleNameMap[tag]?.deepCopy() ?: currentModuleName.makeRef()
 
         val sourceMap = info.sourceMap
