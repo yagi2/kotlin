@@ -227,8 +227,20 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             }
         }
 
+        File outputDir = outputFile.getParentFile();
+        if (outputDir == null) {
+            outputDir = outputFile.getAbsoluteFile().getParentFile();
+        }
+        try {
+            config.getConfiguration().put(JSConfigurationKeys.OUTPUT_DIR, outputDir.getCanonicalFile());
+        }
+        catch (IOException e) {
+            messageCollector.report(ERROR, "Could not resolve output directory", null);
+            return ExitCode.COMPILATION_ERROR;
+        }
+
         if (config.getConfiguration().getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
-            checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config.getSourceMapRoots());
+            checkDuplicateSourceFileNames(messageCollector, sourcesFiles, config);
         }
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.getMain());
@@ -256,11 +268,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.COMPILATION_ERROR;
         }
 
-        File outputDir = outputFile.getParentFile();
-        if (outputDir == null) {
-            outputDir = outputFile.getAbsoluteFile().getParentFile();
-        }
-
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector,
@@ -272,12 +279,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static void checkDuplicateSourceFileNames(
             @NotNull MessageCollector log,
             @NotNull List<KtFile> sourceFiles,
-            @NotNull List<String> sourceRoots
+            @NotNull JsConfig config
     ) {
-        if (sourceRoots.isEmpty()) return;
+        if (config.getSourceMapRoots().isEmpty()) return;
 
-        List<File> sourceRootFiles = sourceRoots.stream().map(File::new).collect(Collectors.toList());
-        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRootFiles);
+        SourceFilePathResolver pathResolver = SourceFilePathResolver.create(config);
         Map<String, String> pathMap = new HashMap<>();
         Set<String> duplicatePaths = new HashSet<>();
 

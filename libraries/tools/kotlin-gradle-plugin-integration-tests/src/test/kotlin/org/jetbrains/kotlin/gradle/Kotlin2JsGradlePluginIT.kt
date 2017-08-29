@@ -200,19 +200,51 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
     @Test
     fun testKotlinJsSourceMapInline() {
-        val project = Project("kotlin2JsProjectWithSourceMapInline", "2.10")
+        val project = Project("kotlin2JsProjectWithSourceMap", "2.10")
+        project.setupWorkingDir()
+
+        project.projectDir.getFileByName("build.gradle").modify {
+            it + "\n" + """
+                allprojects {
+                    compileKotlin2Js {
+                        kotlinOptions.sourceMapPrefix = "./"
+                        kotlinOptions.sourceMapEmbedSources = "always"
+                    }
+                }
+            """.trimIndent()
+        }
 
         project.build("build") {
             assertSuccessful()
 
-            val mapFilePath = "app/build/classes/main/app.js.map"
+            val mapFilePath = "app/build/kotlin2js/main/app.js.map"
             assertFileExists(mapFilePath)
             val map = fileInWorkingDir(mapFilePath).readText()
 
-            assertTrue("Source map should contain reference to main.kt") { map.contains("\"main.kt\"") }
-            assertTrue("Source map should contain reference to foo.kt") { map.contains("\"foo.kt\"") }
+            assertTrue("Source map should contain reference to main.kt") { map.contains("\"./main.kt\"") }
+            assertTrue("Source map should contain reference to foo.kt") { map.contains("\"./foo.kt\"") }
             assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {\\n") }
             assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {\\n") }
+        }
+    }
+
+    @Test
+    fun testKotlinJsSourceMapRelativePath() {
+        val project = Project("kotlin2JsProjectWithSourceMap", "2.10")
+
+        project.debug("build") {
+            assertSuccessful()
+
+            val mapFilePath = "app/build/kotlin2js/main/app.js.map"
+            assertFileExists(mapFilePath)
+            val map = fileInWorkingDir(mapFilePath).readText()
+
+            assertTrue("Source map should contain reference to main.kt") {
+                map.contains("\"../../../src/main/kotlin/main.kt\"")
+            }
+            assertTrue("Source map should contain reference to foo.kt") {
+                map.contains("\"../../../../lib/src/main/kotlin/foo.kt\"")
+            }
         }
     }
 

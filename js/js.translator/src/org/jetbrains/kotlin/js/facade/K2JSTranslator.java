@@ -151,8 +151,7 @@ public final class K2JSTranslator {
         ExpandIsCallsKt.expandIsCalls(newFragments);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
-        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRoots);
+        SourceFilePathResolver pathResolver = SourceFilePathResolver.create(config);
 
         JsAstSerializer serializer = new JsAstSerializer(file -> {
             try {

@@ -6,5 +6,7 @@ $TESTDATA_DIR$/sourceMapRoot/foo/baz/file4.kt
 -source-map
 -source-map-source-roots
 $TESTDATA_DIR$/sourceMapRoot/foo
+-source-map-prefix
+./
 -output
 $TEMP_DIR$/out.js

@@ -23,13 +23,16 @@ allprojects {
     compileKotlin2Js {
         kotlinOptions.freeCompilerArgs = [ "-Xskip-metadata-version-check" ]
         kotlinOptions.sourceMap = true
-        kotlinOptions.sourceMapEmbedSources = "always"
     }
 }
 
 project("app") {
     dependencies {
         compile project(":lib")
+    }
+
+    compileKotlin2Js {
+        kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/app.js"
     }
 }
 

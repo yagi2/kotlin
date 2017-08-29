@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
     val sourceMapFile = File(outputFile.parentFile, outputFile.name + ".map")
     val textOutput = TextOutputImpl()
     val sourceMapBuilder = SourceMap3Builder(outputFile, textOutput, "")
-    val consumer = SourceMapBuilderConsumer(sourceMapBuilder, SourceFilePathResolver(mutableListOf()), true, true)
+    val consumer = SourceMapBuilderConsumer(sourceMapBuilder, SourceFilePathResolver(mutableListOf(), null), true, true)
     program.globalBlock.accept(JsToStringGenerationVisitor(textOutput, consumer))
     val sourceMapContent = sourceMapBuilder.build()
 
