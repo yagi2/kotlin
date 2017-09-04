@@ -360,6 +360,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
             }
         }
 
+
         this.maxStack = Math.max(this.maxStack, Math.max(maxStack, max));
 
         super.visitMaxs(this.maxStack, maxLocals);
