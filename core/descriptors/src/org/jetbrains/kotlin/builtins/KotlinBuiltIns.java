@@ -72,6 +72,8 @@ public abstract class KotlinBuiltIns {
             ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
             BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
+    private final MemoizedFunctionToNotNull<Name, ClassDescriptor>
+            builtInClassesCache;
 
     private ModuleDescriptorImpl builtInsModule;
 
@@ -133,6 +135,13 @@ public abstract class KotlinBuiltIns {
                         FunctionClassDescriptor.Kind.SuspendFunction,
                         arity
                 );
+            }
+        });
+
+        builtInClassesCache = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor invoke(Name name) {
+                return getBuiltInClassByName(name, getBuiltInsPackageFragment());
             }
         });
     }
@@ -415,7 +424,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        return getBuiltInClassByName(simpleName, getBuiltInsPackageFragment());
+        return builtInClassesCache.invoke(simpleName);
     }
 
     @NotNull
