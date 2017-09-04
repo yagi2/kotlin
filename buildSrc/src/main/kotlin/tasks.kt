@@ -1,10 +1,35 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.gradle.api.*
-import org.gradle.kotlin.dsl.*
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.file.FileTree
+import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.extra
 
-fun Project.projectTest(body: Test.() -> Unit = {}): Test = getOrCreateTask("test") {
+open class KotlinProjectTest : Test() {
+    override fun getCandidateClassFiles(): FileTree {
+        val patterns = filter.includePatterns + ((filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet())
+        if (patterns.isEmpty()) {
+            return super.getCandidateClassFiles()
+        }
+        val classFilePaths = patterns.mapTo(HashSet()) { pattern ->
+            val maybeMethodName = pattern.substringAfterLast('.')
+            val className = if (maybeMethodName.isNotEmpty() && maybeMethodName[0].isLowerCase())
+                pattern.substringBeforeLast('.')
+            else
+                pattern
+
+            className.replace('.', '/') + ".class"
+        }
+        val allFiles = testClassesDirs.files.flatMap { dir ->
+            classFilePaths.map { name -> File(dir, name) }
+        }
+        return project.files(allFiles).asFileTree
+    }
+}
+
+fun Project.projectTest(body: KotlinProjectTest.() -> Unit = {}): Test = getOrCreateTask<KotlinProjectTest>("test") {
     jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1200m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
     maxHeapSize = "1200m"
     systemProperty("idea.is.unit.test", "true")
@@ -16,4 +41,4 @@ fun Project.projectTest(body: Test.() -> Unit = {}): Test = getOrCreateTask("tes
 }
 
 inline fun<reified T: Task> Project.getOrCreateTask(taskName: String, body: T.() -> Unit): T =
-        (tasks.findByName(taskName)?.let { it as T } ?: task<T>(taskName)).apply{ body() }
+        (tasks.findByName(taskName) as? T) ?: tasks.replace(taskName, T::class.java).apply{ body() }
