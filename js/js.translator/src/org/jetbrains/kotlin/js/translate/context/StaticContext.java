@@ -114,7 +114,7 @@ public final class StaticContext {
     private final Map<DeclarationDescriptor, JsName> nameCache = new HashMap<>();
 
     @NotNull
-    private final Map<PropertyDescriptor, JsName> backingFieldNameCache = new HashMap<>();
+    private final Map<VariableDescriptorWithAccessors, JsName> backingFieldNameCache = new HashMap<>();
 
     @NotNull
     private final Map<DeclarationDescriptor, JsExpression> fqnCache = new HashMap<>();
@@ -349,7 +349,7 @@ public final class StaticContext {
     }
 
     @NotNull
-    public JsName getNameForBackingField(@NotNull PropertyDescriptor property) {
+    public JsName getNameForBackingField(@NotNull VariableDescriptorWithAccessors property) {
         JsName name = backingFieldNameCache.get(property);
 
         if (name == null) {
