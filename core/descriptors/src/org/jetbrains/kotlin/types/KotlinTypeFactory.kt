@@ -74,7 +74,7 @@ object KotlinTypeFactory {
             annotations: Annotations,
             descriptor: ClassDescriptor,
             arguments: List<TypeProjection>
-    ): SimpleType = simpleType(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
+    ): SimpleType = simpleType(annotations, descriptor.typeConstructor, arguments, false)
 
     @JvmStatic
     fun simpleType(

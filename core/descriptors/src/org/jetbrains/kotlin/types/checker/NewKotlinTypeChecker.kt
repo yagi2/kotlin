@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.types.checker.TypeCheckerContext.LowerCapturedTypePo
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SeveralSupertypesWithSameConstructorPolicy.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -283,11 +284,12 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             baseType: SimpleType,
             constructor: TypeConstructor
     ): List<SimpleType> {
-        if (constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.isFinalClass == true) {
-            return if (areEqualTypeConstructors(baseType.constructor, constructor))
-                listOf(captureFromArguments(baseType, CaptureStatus.FOR_SUBTYPING) ?: baseType)
-            else
-                emptyList()
+        if (areEqualTypeConstructors(baseType.constructor, constructor) ||
+            constructor.declarationDescriptor?.defaultType?.isAnyOrNullableAny() == true) {
+            return listOf(captureFromArguments(baseType, CaptureStatus.FOR_SUBTYPING) ?: baseType)
+        }
+        else if (constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.isFinalClass == true) {
+            return emptyList()
         }
 
         var result: MutableList<SimpleType>? = null
