@@ -105,7 +105,17 @@ class TowerResolver {
             resultCollector: ResultCollector<C>,
             useOrder: Boolean
     ): Collection<C> {
-        fun TowerData.process() = processTowerData(processor, resultCollector, useOrder, this)
+        fun TowerData.process(): Collection<C>? {
+            val tmp = arrayListOf<Collection<String>>()
+
+            for (i in 1..10) {
+                tmp.add(emptyList())
+            }
+
+            if (tmp.size != 10) throw IllegalStateException()
+
+            return processTowerData(processor, resultCollector, useOrder, this)
+        }
 
         val localLevels = lexicalScope.parentsWithSelf.
                 filterIsInstance<LexicalScope>().filter { it.kind.withLocalDescriptors }.
