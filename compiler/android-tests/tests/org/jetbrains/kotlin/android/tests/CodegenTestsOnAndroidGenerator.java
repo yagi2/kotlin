@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.tests;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -147,10 +148,12 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
 
         public List<KtFile> files = new ArrayList<>();
         private KotlinCoreEnvironment environment;
+        private Disposable disposable;
 
         private FilesWriter(boolean isFullJdkAndRuntime, boolean inheritMultifileParts) {
             this.isFullJdkAndRuntime = isFullJdkAndRuntime;
             this.inheritMultifileParts = inheritMultifileParts;
+            this.disposable = new TestDisposable();
             this.environment = createEnvironment(isFullJdkAndRuntime);
         }
 
@@ -163,7 +166,7 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
             if (inheritMultifileParts) {
                 configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, true);
             }
-            return KotlinCoreEnvironment.createForTests(myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+            return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         }
 
         public boolean shouldWriteFilesOnDisk() {
@@ -179,8 +182,9 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         public void writeFilesOnDisk() {
             writeFiles(files);
             files = new ArrayList<>();
-            if (environment != null) {
-                Disposer.dispose(myTestRootDisposable);
+            if (disposable != null) {
+                Disposer.dispose(disposable);
+                disposable = new TestDisposable();
             }
             environment = createEnvironment(isFullJdkAndRuntime);
         }
