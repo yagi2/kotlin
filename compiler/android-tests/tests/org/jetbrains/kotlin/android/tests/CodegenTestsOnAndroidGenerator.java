@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.android.tests;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
@@ -177,6 +179,9 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
         public void writeFilesOnDisk() {
             writeFiles(files);
             files = new ArrayList<>();
+            if (environment != null) {
+                Disposer.dispose(myTestRootDisposable);
+            }
             environment = createEnvironment(isFullJdkAndRuntime);
         }
 
@@ -202,11 +207,18 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
                                 ? " (JVM.INHERIT_MULTIFILE_PARTS)"
                                 : isFullJdkAndRuntime ? " (full jdk and runtime)" : "") + " into " + outputDir.getName() + "...");
             OutputFileCollection outputFiles;
+            GenerationState state = null;
             try {
-                outputFiles = GenerationUtils.compileFiles(filesToCompile, environment).getFactory();
+                state = GenerationUtils.compileFiles(filesToCompile, environment);
+                outputFiles = state.getFactory();
             }
             catch (Throwable e) {
                 throw new RuntimeException(e);
+            }
+            finally {
+                if (state != null) {
+                    state.destroy();
+                }
             }
 
             if (!outputDir.exists()) {
