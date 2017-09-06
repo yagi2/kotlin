@@ -18,68 +18,16 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl
-import com.intellij.formatting.Block
-import com.intellij.formatting.FormattingDocumentModel
-import com.intellij.formatting.FormattingModel
-import com.intellij.lang.ASTNode
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.formatter.FormattingDocumentModelImpl
-import org.jetbrains.kotlin.idea.inspections.CollectChangesWithoutApplyModel.FormattingChange
-import org.jetbrains.kotlin.idea.inspections.CollectChangesWithoutApplyModel.FormattingChange.ReplaceWhiteSpace
-import org.jetbrains.kotlin.idea.inspections.CollectChangesWithoutApplyModel.FormattingChange.ShiftIndentInsideRange
+import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange
+import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange.ReplaceWhiteSpace
+import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange.ShiftIndentInsideRange
+import org.jetbrains.kotlin.idea.formatter.collectFormattingChanges
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.NotNullableCopyableUserDataProperty
-import org.jetbrains.kotlin.psi.UserDataProperty
-
-var PsiFile.collectFormattingChanges: Boolean by NotNullableCopyableUserDataProperty(Key.create("COLLECT_FORMATTING_CHANGES"), false)
-var PsiFile.collectChangesFormattingModel: CollectChangesWithoutApplyModel? by UserDataProperty(Key.create("COLLECT_CHANGES_FORMATTING_MODEL"))
-
-fun collectFormattingChanges(file: PsiFile): Set<FormattingChange> {
-    try {
-        file.collectFormattingChanges = true
-        CodeStyleManager.getInstance(file.project).reformat(file)
-        return file.collectChangesFormattingModel?.requestedChanges ?: emptySet()
-    }
-    finally {
-        file.collectFormattingChanges = false
-        file.collectChangesFormattingModel = null
-    }
-}
-
-class CollectChangesWithoutApplyModel(val file: PsiFile, val block: Block) : FormattingModel {
-    sealed class FormattingChange {
-        data class ShiftIndentInsideRange(val node: ASTNode?, val range: TextRange, val indent: Int) : FormattingChange()
-        data class ReplaceWhiteSpace(val textRange: TextRange, val whiteSpace: String) : FormattingChange()
-    }
-
-    private val documentModel = FormattingDocumentModelImpl.createOn(file)
-    private val changes = HashSet<FormattingChange>()
-
-    val requestedChanges: Set<FormattingChange> get() = changes
-
-    override fun commitChanges() {
-        /* do nothing */
-    }
-
-    override fun getDocumentModel(): FormattingDocumentModel = documentModel
-    override fun getRootBlock(): Block = block
-
-    override fun shiftIndentInsideRange(node: ASTNode?, range: TextRange, indent: Int): TextRange {
-        changes.add(ShiftIndentInsideRange(node, range, indent))
-        return range
-    }
-
-    override fun replaceWhiteSpace(textRange: TextRange, whiteSpace: String): TextRange {
-        changes.add(ReplaceWhiteSpace(textRange, whiteSpace))
-        return textRange
-    }
-}
 
 class ReformatInspection : LocalInspectionTool() {
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
