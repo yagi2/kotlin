@@ -424,6 +424,27 @@ public final class TranslationUtils {
     }
 
     @NotNull
+    public static KotlinType getDispatchReceiverTypeForCoercion(@NotNull CallableDescriptor descriptor) {
+        descriptor = descriptor.getOriginal();
+        if (descriptor.getDispatchReceiverParameter() == null) {
+            throw new IllegalArgumentException("This method can only be used for class members; " +
+                                               "given descriptor is not a member of a class " + descriptor);
+        }
+
+        Collection<? extends CallableDescriptor> overridden = descriptor.getOverriddenDescriptors();
+        if (overridden.isEmpty()) {
+            return descriptor.getDispatchReceiverParameter().getType();
+        }
+
+        Set<KotlinType> typesFromOverriddenCallables = overridden.stream()
+                .map(TranslationUtils::getDispatchReceiverTypeForCoercion)
+                .collect(Collectors.toSet());
+        return typesFromOverriddenCallables.size() == 1
+               ? typesFromOverriddenCallables.iterator().next()
+               : DescriptorUtils.getContainingModule(descriptor).getBuiltIns().getAnyType();
+    }
+
+    @NotNull
     public static JsExpression coerce(@NotNull TranslationContext context, @NotNull JsExpression value, @NotNull KotlinType to) {
         if (DynamicTypesKt.isDynamic(to)) return value;
 

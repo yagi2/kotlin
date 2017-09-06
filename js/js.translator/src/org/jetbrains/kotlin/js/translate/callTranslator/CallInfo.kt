@@ -136,6 +136,9 @@ private fun TranslationContext.createCallInfo(
 
     var dispatchReceiver = getDispatchReceiver()
     var dispatchReceiverType = resolvedCall.smartCastDispatchReceiverType ?: resolvedCall.dispatchReceiver?.type
+    if (dispatchReceiverType != null && (resolvedCall.resultingDescriptor as? FunctionDescriptor)?.kind?.isReal == false) {
+        dispatchReceiverType = TranslationUtils.getDispatchReceiverTypeForCoercion(resolvedCall.resultingDescriptor)
+    }
     var extensionReceiver = getExtensionReceiver()
     var notNullConditional: JsConditional? = null
 

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
-import org.jetbrains.kotlin.js.backend.ast.metadata.type
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.patterns.NamePredicate
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import java.util.*
@@ -48,15 +46,7 @@ object ArrayFIF : CompositeFIF() {
     val GET_INTRINSIC = intrinsify { callInfo, arguments, context ->
         assert(arguments.size == 1) { "Array get expression must have one argument." }
         val (indexExpression) = arguments
-        JsArrayAccess(callInfo.dispatchReceiver, indexExpression).let {
-            if (!typedArraysEnabled(context.config)) {
-                it.type = context.currentModule.builtIns.anyType
-                TranslationUtils.coerce(context, it, callInfo.resolvedCall.resultingDescriptor.returnType!!)
-            }
-            else {
-                it
-            }
-        }
+        JsArrayAccess(callInfo.dispatchReceiver, indexExpression)
     }
 
     @JvmField

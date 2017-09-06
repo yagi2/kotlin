@@ -827,6 +827,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("extensionReceiver.kt")
+        public void testExtensionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/extensionReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ifWithUnit.kt")
         public void testIfWithUnit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/coercion/ifWithUnit.kt");
@@ -7850,6 +7856,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("arraysIterator.kt")
         public void testArraysIterator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/standardClasses/arraysIterator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("charArrayGetSet.kt")
+        public void testCharArrayGetSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/standardClasses/charArrayGetSet.kt");
             doTest(fileName);
         }
 

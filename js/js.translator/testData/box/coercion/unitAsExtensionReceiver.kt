@@ -4,7 +4,7 @@ fun foo() {
     log += "foo"
 }
 
-fun Unit.bar() = jsTypeOf(this.asDynamic()) == "object"
+fun Unit.bar() = jsTypeOf(this.asDynamic()) == "undefined"
 
 fun Any.baz() = jsTypeOf(this.asDynamic()) == "object"
 
