@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1002
 var log = ""
 
 fun foo(): Unit {

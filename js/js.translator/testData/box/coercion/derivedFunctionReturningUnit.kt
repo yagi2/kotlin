@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1012
 var log = ""
 
 abstract class A<out T> {

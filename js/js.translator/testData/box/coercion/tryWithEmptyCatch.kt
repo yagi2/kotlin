@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1004
 fun test(x: Int): Any {
     return try {
         if (x % 2 == 0) throw RuntimeException()

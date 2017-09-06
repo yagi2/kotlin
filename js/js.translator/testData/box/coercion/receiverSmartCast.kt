@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 997
 fun foo(x: Any): String {
     return when (x) {
         is Char -> "char: ${x.toInt()}"
