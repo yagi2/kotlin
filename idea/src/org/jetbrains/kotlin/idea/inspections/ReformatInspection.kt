@@ -22,9 +22,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange
-import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange.ReplaceWhiteSpace
-import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange.ShiftIndentInsideRange
+import org.jetbrains.kotlin.idea.formatter.FormattingChange
+import org.jetbrains.kotlin.idea.formatter.FormattingChange.ReplaceWhiteSpace
+import org.jetbrains.kotlin.idea.formatter.FormattingChange.ShiftIndentInsideRange
 import org.jetbrains.kotlin.idea.formatter.collectFormattingChanges
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
@@ -63,11 +63,11 @@ class ReformatInspection : LocalInspectionTool() {
     private fun isEmptyLineReformat(whitespace: PsiWhiteSpace, change: FormattingChange): Boolean {
         if (change !is FormattingChange.ReplaceWhiteSpace) return false
 
-        val text = whitespace.text
-        val replacedWith = change.whiteSpace
+        val beforeText = whitespace.text
+        val afterText = change.whiteSpace
 
-        return text.count { it == '\n' } == replacedWith.count { it == '\n' } &&
-               text.substringAfterLast('\n') == replacedWith.substringAfterLast('\n')
+        return beforeText.count { it == '\n' } == afterText.count { it == '\n' } &&
+               beforeText.substringAfterLast('\n') == afterText.substringAfterLast('\n')
     }
 
     private object ReformatQuickFix : LocalQuickFix {

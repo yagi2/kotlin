@@ -25,14 +25,29 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.formatter.FormattingDocumentModelImpl
-import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange
-import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange.ReplaceWhiteSpace
-import org.jetbrains.kotlin.idea.formatter.CollectChangesWithoutApplyModel.FormattingChange.ShiftIndentInsideRange
+import org.jetbrains.kotlin.idea.formatter.FormattingChange.ReplaceWhiteSpace
+import org.jetbrains.kotlin.idea.formatter.FormattingChange.ShiftIndentInsideRange
 import org.jetbrains.kotlin.psi.NotNullableCopyableUserDataProperty
 import org.jetbrains.kotlin.psi.UserDataProperty
 
-var PsiFile.collectFormattingChanges: Boolean by NotNullableCopyableUserDataProperty(Key.create("COLLECT_FORMATTING_CHANGES"), false)
-var PsiFile.collectChangesFormattingModel: CollectChangesWithoutApplyModel? by UserDataProperty(Key.create("COLLECT_CHANGES_FORMATTING_MODEL"))
+private var PsiFile.collectFormattingChanges: Boolean by NotNullableCopyableUserDataProperty(Key.create("COLLECT_FORMATTING_CHANGES"), false)
+private var PsiFile.collectChangesFormattingModel: CollectChangesWithoutApplyModel? by UserDataProperty(Key.create("COLLECT_CHANGES_FORMATTING_MODEL"))
+
+fun createCollectFormattingChangesModel(file: PsiFile, block: Block): FormattingModel? {
+    if (file.collectFormattingChanges) {
+        return CollectChangesWithoutApplyModel(file, block).also {
+            file.collectChangesFormattingModel = it
+        }
+    }
+
+    return null
+}
+
+sealed class FormattingChange {
+    data class ShiftIndentInsideRange(val node: ASTNode?, val range: TextRange, val indent: Int) : FormattingChange()
+    data class ReplaceWhiteSpace(val textRange: TextRange, val whiteSpace: String) : FormattingChange()
+}
+
 fun collectFormattingChanges(file: PsiFile): Set<FormattingChange> {
     try {
         file.collectFormattingChanges = true
@@ -45,12 +60,7 @@ fun collectFormattingChanges(file: PsiFile): Set<FormattingChange> {
     }
 }
 
-class CollectChangesWithoutApplyModel(val file: PsiFile, val block: Block) : FormattingModel {
-    sealed class FormattingChange {
-        data class ShiftIndentInsideRange(val node: ASTNode?, val range: TextRange, val indent: Int) : FormattingChange()
-        data class ReplaceWhiteSpace(val textRange: TextRange, val whiteSpace: String) : FormattingChange()
-    }
-
+private class CollectChangesWithoutApplyModel(val file: PsiFile, val block: Block) : FormattingModel {
     private val documentModel = FormattingDocumentModelImpl.createOn(file)
     private val changes = HashSet<FormattingChange>()
 

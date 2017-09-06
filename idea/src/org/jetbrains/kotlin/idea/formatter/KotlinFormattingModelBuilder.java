@@ -30,7 +30,6 @@ import com.intellij.psi.formatter.FormattingDocumentModelImpl;
 import com.intellij.psi.formatter.PsiBasedFormattingModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
@@ -49,10 +48,10 @@ public class KotlinFormattingModelBuilder implements FormattingModelBuilder {
             return new PsiBasedFormattingModel(containingFile, block, formattingDocumentModel);
         }
 
-        if (element instanceof KtFile) {
-            KtFile ktFile = (KtFile) element;
-            if (CollectChangesWithoutApplyModelKt.getCollectFormattingChanges(ktFile)) {
-                return new CollectChangesWithoutApplyModel(ktFile, block);
+        if (element instanceof PsiFile) {
+            FormattingModel collectChangesModel = CollectChangesWithoutApplyModelKt.createCollectFormattingChangesModel((PsiFile) element, block);
+            if (collectChangesModel != null) {
+                return collectChangesModel;
             }
         }
 
