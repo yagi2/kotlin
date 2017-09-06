@@ -145,7 +145,7 @@ fun main(a: A, b: A.B, c: A.C) {
 
     a.baz()<!UNSAFE_CALL!>.<!>get(0)
     a.baz()!!.get(0).get(0)
-    a.baz()!!.get(0)?.get(0)
+    a.baz()!!.get(0)<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)
 
     // b
     b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>)?.length
@@ -162,7 +162,7 @@ fun main(a: A, b: A.B, c: A.C) {
     <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.field<!>.length
 
     b.baz()<!UNSAFE_CALL!>.<!>get(0)
-    b.baz()!!.get(0).get(0)
+    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.baz()!!.get(0)<!>.get(0)
     b.baz()!!.get(0)?.get(0)
 
     // c
@@ -181,5 +181,5 @@ fun main(a: A, b: A.B, c: A.C) {
 
     c.baz()<!UNSAFE_CALL!>.<!>get(0)
     c.baz()!!.get(0).get(0)
-    c.baz()!!.get(0)?.get(0)
+    c.baz()!!.get(0)<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)
 }

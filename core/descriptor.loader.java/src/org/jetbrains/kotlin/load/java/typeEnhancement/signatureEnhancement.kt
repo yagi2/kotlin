@@ -179,7 +179,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             private val fromOverride: KotlinType,
             private val fromOverridden: Collection<KotlinType>,
             private val isCovariant: Boolean,
-            private val defaultTopLevelQualifiers: JavaTypeQualifiers?
+            private val defaultTypeQualifierForContainer: JavaTypeQualifiers?
     ) {
         fun enhance(predefined: TypeEnhancementInfo? = null): PartEnhancementResult {
             val qualifiers = computeIndexedQualifiersForOverride()
@@ -230,7 +230,7 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
             fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
-            val defaultTypeQualifier = defaultTopLevelQualifiers?.takeIf { isHeadTypeConstructor }
+            val defaultTypeQualifier = defaultTypeQualifierForContainer
             val nullabilityInfo =
                     composedAnnotation.extractNullability()
                     ?: defaultTypeQualifier?.nullability?.let {

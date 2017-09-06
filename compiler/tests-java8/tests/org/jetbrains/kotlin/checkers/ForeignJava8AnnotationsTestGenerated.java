@@ -61,6 +61,12 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/springNullableWithTypeUse.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305/typeArguments.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")
