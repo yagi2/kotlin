@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package kotlin.internal
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
+package kotlin.internal.jdk7
 
+import kotlin.internal.PlatformImplementations
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-internal open class JRE7PlatformImplementations : PlatformImplementations() {
+internal open class JDK7PlatformImplementations : PlatformImplementations() {
 
     override fun addSuppressed(cause: Throwable, exception: Throwable) = cause.addSuppressed(exception)
 
