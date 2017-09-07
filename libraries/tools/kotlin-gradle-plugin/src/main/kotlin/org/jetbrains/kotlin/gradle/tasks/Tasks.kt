@@ -56,10 +56,13 @@ const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experim
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile() {
     var compilerJarFile: File? = null
+
+    @get:Input
     internal val compilerJar: File
         get() = compilerJarFile
                 ?: findKotlinCompilerJar(project)
                 ?: throw IllegalStateException("Could not find Kotlin Compiler jar. Please specify $name.compilerJarFile")
+
     protected abstract fun findKotlinCompilerJar(project: Project): File?
 }
 
@@ -98,6 +101,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
 
+    @get:Input
     override val serializedCompilerArguments: List<String>
         get() {
             val arguments = createCompilerArgs()
