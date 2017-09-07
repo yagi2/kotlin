@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlin_root = "$rootDir/../../../"
+        kotlin_root = file("$rootDir/../../..")
         distDir = file("$kotlin_root/dist")
         bootstrapCompilerFile = file("$distDir/kotlin-compiler-for-maven.jar")
         kotlin_version = "1.1.3"
