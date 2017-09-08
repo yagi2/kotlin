@@ -3947,6 +3947,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineImportNameClash.kt")
+        public void testInlineImportNameClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/inlineImportNameClash.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineInInlineWithLambda.kt")
         public void testInlineInInlineWithLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/inline/inlineInInlineWithLambda.kt");
