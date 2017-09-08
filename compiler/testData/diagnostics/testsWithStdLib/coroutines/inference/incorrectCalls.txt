@@ -13,7 +13,7 @@ public val test4: [ERROR : Type for generate {
     yield(3)
     barReturnType()
 }]
-public fun </*0*/ S> generate(/*0*/ g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.collections.List<S>
+public fun </*0*/ S> generate(/*0*/ g: (suspend GenericController<S>.() -> kotlin.Unit)): kotlin.collections.List<S>
 
 public final class GenericController</*0*/ T> {
     public constructor GenericController</*0*/ T>()

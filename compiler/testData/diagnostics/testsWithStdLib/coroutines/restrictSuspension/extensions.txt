@@ -1,8 +1,8 @@
 package
 
-public fun generate1(/*0*/ f: suspend SuperInterface.() -> kotlin.Unit): kotlin.Unit
-public fun generate2(/*0*/ f: suspend RestrictedController.() -> kotlin.Unit): kotlin.Unit
-public fun generate3(/*0*/ f: suspend SubClass.() -> kotlin.Unit): kotlin.Unit
+public fun generate1(/*0*/ f: (suspend SuperInterface.() -> kotlin.Unit)): kotlin.Unit
+public fun generate2(/*0*/ f: (suspend RestrictedController.() -> kotlin.Unit)): kotlin.Unit
+public fun generate3(/*0*/ f: (suspend SubClass.() -> kotlin.Unit)): kotlin.Unit
 public suspend fun RestrictedController.ext(): kotlin.Unit
 public suspend fun kotlin.Any?.extAny(): kotlin.Unit
 public suspend fun SubClass.extSub(): kotlin.Unit

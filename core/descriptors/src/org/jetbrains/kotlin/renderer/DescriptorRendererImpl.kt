@@ -302,19 +302,29 @@ internal class DescriptorRendererImpl(
     }
 
     private fun StringBuilder.renderFunctionType(type: KotlinType) {
-        val lengthBefore = length
-        // we need special renderer to skip @ExtensionFunctionType
-        with(functionTypeAnnotationsRenderer) {
-            renderAnnotations(type)
+        fun renderAnnotations(): Boolean {
+            val lengthBefore = length
+            // we need special renderer to skip @ExtensionFunctionType
+            with(functionTypeAnnotationsRenderer) {
+                renderAnnotations(type)
+            }
+            return length != lengthBefore
         }
-        val hasAnnotations = length != lengthBefore
+
+        val isSuspendFunction = type.isSuspendFunctionType
+        val someAnnotationsRendered = if (!isSuspendFunction) {
+            renderAnnotations()
+        }
+        else {
+            false
+        }
 
         val isNullable = type.isMarkedNullable
         val receiverType = type.getReceiverTypeFromFunctionType()
 
-        val needParenthesis = isNullable || (hasAnnotations && receiverType != null)
+        val needParenthesis = isNullable || ((someAnnotationsRendered || isSuspendFunction) && receiverType != null)
 
-        if (needParenthesis && hasAnnotations) {
+        if (needParenthesis && someAnnotationsRendered) {
             assert(last() == ' ')
             if (get(lastIndex - 1) != ')') {
                 // last annotation rendered without parenthesis - need to add them otherwise parsing will be incorrect
@@ -324,7 +334,10 @@ internal class DescriptorRendererImpl(
 
         if (needParenthesis) append("(")
 
-        renderModifier(this, type.isSuspendFunctionType, "suspend")
+        if (isSuspendFunction) {
+            renderAnnotations()
+            renderModifier(this, isSuspendFunction, "suspend")
+        }
 
         if (receiverType != null) {
             val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable ||
