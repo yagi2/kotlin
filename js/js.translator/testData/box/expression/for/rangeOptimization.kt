@@ -3,6 +3,7 @@
 // CHECK_CONTAINS_NO_CALLS: testRangeToFunction
 // CHECK_CONTAINS_NO_CALLS: testUntil
 // CHECK_CONTAINS_NO_CALLS: testDownTo
+// CHECK_CONTAINS_NO_CALLS: testStep
 // CHECK_CONTAINS_NO_CALLS: testEmptyRange
 // CHECK_CONTAINS_NO_CALLS: testRangeToParams except=from;to
 
@@ -38,6 +39,25 @@ fun testDownTo(): String {
     return result
 }
 
+fun testStep(): String {
+    var result = ""
+    for (x in 1..5 step 2) {
+        result += x
+    }
+    result += ";"
+
+    for (x in 1 until 6 step 2) {
+        result += x
+    }
+    result += ";"
+
+    for (x in 6.downTo(1).step(2)) {
+        result += x
+    }
+
+    return result
+}
+
 fun testEmptyRange(): String {
     var result = ""
     for (x in 3..1) {
@@ -66,6 +86,9 @@ fun box(): String {
 
     r = testDownTo()
     if (r != "321") return "fail: downTo: $r"
+
+    r = testStep()
+    if (r != "135;135;642") return "fail: $r"
 
     r = testEmptyRange()
     if (r != "") return "fail: emptyRange: $r"
