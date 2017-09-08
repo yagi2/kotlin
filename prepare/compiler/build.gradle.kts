@@ -12,7 +12,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:2.0.0")
+        classpath("com.github.jengelman.gradle.plugins:shadow:1.2.3")
         classpath("net.sf.proguard:proguard-gradle:5.3.1")
     }
 }
