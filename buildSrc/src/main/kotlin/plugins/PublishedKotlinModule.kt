@@ -91,7 +91,7 @@ open class PublishedKotlinModule : Plugin<Project> {
 
             val preparePublication = project.rootProject.tasks.getByName("preparePublication")
 
-            (tasks.getByName("uploadArchives") as Upload).apply {
+            val uploadArchives = (tasks.getByName("uploadArchives") as Upload).apply {
 
                 dependsOn(preparePublication)
 
@@ -128,6 +128,10 @@ open class PublishedKotlinModule : Plugin<Project> {
                         }
                     }
                 }
+            }
+
+            tasks.create("publish") {
+                dependsOn(uploadArchives)
             }
         }
     }
