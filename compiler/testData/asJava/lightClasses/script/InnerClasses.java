@@ -1,5 +1,5 @@
 public class InnerClasses extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
-    public InnerClasses(java.lang.String[] strings) { /* compiled code */ }
+    public InnerClasses(java.lang.String[] p) { /* compiled code */ }
 
     public static final class Bar {
         private final int b = 0;

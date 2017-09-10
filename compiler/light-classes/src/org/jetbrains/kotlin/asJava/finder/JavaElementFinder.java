@@ -87,7 +87,6 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         FqName qualifiedName = new FqName(qualifiedNameString);
 
         findClassesAndObjects(qualifiedName, scope, answer);
-        answer.addAll(lightClassGenerationSupport.getScriptClasses(qualifiedName, scope));
         answer.addAll(lightClassGenerationSupport.getFacadeClasses(qualifiedName, scope));
         answer.addAll(lightClassGenerationSupport.getKotlinInternalClasses(qualifiedName, scope));
 

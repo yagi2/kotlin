@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext
@@ -134,6 +135,7 @@ private fun testLightClass(expected: File, testData: File, normalize: (String) -
                         .replace("java.lang.String s1", "java.lang.String p1")
                         .replace("java.lang.String s2", "java.lang.String p2")
                         .replace("java.lang.Object o)", "java.lang.Object p)")
+                        .replace("java.lang.String[] strings", "java.lang.String[] p")
                         .removeLinesStartingWith("@" + JvmAnnotationNames.METADATA_FQ_NAME.asString())
                         .run(normalize)
             }
@@ -141,6 +143,10 @@ private fun testLightClass(expected: File, testData: File, normalize: (String) -
 }
 
 private fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
+    ktFile?.script?.let {
+        return it.toLightClass()
+    }
+
     return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project)) ?:
            PsiTreeUtil.findChildrenOfType(ktFile, KtClassOrObject::class.java)
                    .find { fqName.endsWith(it.nameAsName!!.asString()) }
