@@ -42,6 +42,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             listOf(MockLibraryUtil.compileJvmLibraryToJar(
                 TEST_ANNOTATIONS_SOURCE_PATH,
                 "test-foreign-annotations",
+                extraOptions = listOf("-Xallow-kotlin-package"),
                 extraClasspath = extraClassPath.map { it.path }
         ))
 
