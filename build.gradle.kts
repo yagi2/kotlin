@@ -236,11 +236,16 @@ val compilerCopyTask = task<Copy>("idea-plugin-copy-compiler") {
     from(distDir) { include("kotlinc/**") }
 }
 
-task<Copy>("dist-plugin") {
+task<Copy>("distPlugin") {
     dependsOn(compilerCopyTask)
     dependsOnTaskIfExistsRec("idea-plugin")
     shouldRunAfter(":prepare:kotlin-plugin:idea-plugin")
     into("$ideaPluginDir/lib")
+}
+
+task("dist-plugin") {
+    // deprecated
+    dependsOn("distPlugin")
 }
 
 tasks {
@@ -251,17 +256,28 @@ tasks {
         }
     }
 
-    "core-libs-tests" {
-        dependsOn(":kotlin-test:kotlin-test-common:test",
-                  ":kotlin-test:kotlin-test-jvm:test",
-                  ":kotlin-test:kotlin-test-junit:test",
-                  ":kotlin-stdlib:test",
-                  ":kotlin-stdlib-jre7:test",
-                  ":kotlin-stdlib-jre8:test",
-                  ":tools:binary-compatibility-validator:test",
-                  ":kotlin-reflect:test")
+    val coreLibProjects = listOf(
+            ":kotlin-stdlib",
+            ":kotlin-stdlib-common",
+            ":kotlin-stdlib-js",
+            ":kotlin-stdlib-jre7",
+            ":kotlin-stdlib-jre8",
+            ":kotlin-test:kotlin-test-common",
+            ":kotlin-test:kotlin-test-jvm",
+            ":kotlin-test:kotlin-test-junit",
+            ":kotlin-test:kotlin-test-js",
+            ":kotlin-reflect"
+    )
+
+    "coreLibsTest" {
+        (coreLibProjects + listOf(
+                ":kotlin-stdlib:samples",
+                ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+                ":tools:binary-compatibility-validator"
+        )).forEach {
+            dependsOn(it + ":check")
+        }
     }
-    "core-libs-check" { dependsOn("core-libs-tests") }
 
     "compiler-tests" {
         afterEvaluate {
@@ -271,28 +287,26 @@ tasks {
                   ":compiler:container:test",
                   ":compiler:tests-java8:test")
     }
-    "compiler-check" { dependsOn("compiler-tests") }
 
     "js-tests" {
         dependsOn("dist")
-        dependsOn(
-                ":kotlin-test:kotlin-test-js:test",
-                ":kotlin-stdlib-js:test",
-                ":js:js.tests:test")
+        dependsOn(":js:js.tests:test")
     }
-    "js-check" { dependsOn("js-tests") }
 
     "jps-tests" {
         dependsOn("dist")
         dependsOn(":jps-plugin:test")
     }
-    "check" { dependsOn("test") }
+
+    "compilerTest" {
+        dependsOn("compiler-tests", "js-tests", "jps-tests", "scripting-tests")
+        dependsOn(":kotlin-build-common:test")
+    }
 
     "idea-plugin-main-tests" {
         dependsOn("dist")
         dependsOn(":idea:test")
     }
-    "idea-plugin-main-check" { dependsOn("idea-plugin-main-tests") }
 
     "idea-plugin-additional-tests" {
         dependsOn("dist")
@@ -301,14 +315,12 @@ tasks {
                   ":j2k:test",
                   ":eval4j:test")
     }
-    "idea-plugin-additional-check" { dependsOn("idea-plugin-additional-tests") }
 
     "idea-plugin-tests" {
         dependsOn("dist")
         dependsOn("idea-plugin-main-tests",
                   "idea-plugin-additional-tests")
     }
-    "idea-plugin-check" { dependsOn("idea-plugin-tests") }
 
     "android-tests" {
         dependsOn("dist")
@@ -317,7 +329,6 @@ tasks {
                   ":kotlin-annotation-processing:test",
                   ":compiler:android-tests:test")
     }
-    "android-check" { dependsOn("android-tests") }
 
     "plugins-tests" {
         dependsOn("dist")
@@ -327,7 +338,6 @@ tasks {
                   ":plugins:uast-kotlin:test",
                   ":kotlin-annotation-processing-gradle:test")
     }
-    "plugins-check" { dependsOn("plugins-tests") }
 
     "scripting-tests" {
         dependsOn("dist")
@@ -335,14 +345,21 @@ tasks {
                   ":examples:kotlin-jsr223-local-example:test",
                   ":examples:kotlin-jsr223-daemon-local-eval-example:test")
     }
-    "scripting-check" { dependsOn("scripting-tests") }
 
     "other-tests" {
         dependsOn("dist")
         dependsOn(":kotlin-build-common:test",
                   ":generators:test")
     }
-    "other-check" { dependsOn("other-tests") }
+
+    "nonCompilerTest" {
+        dependsOn(
+                "idea-plugin-tests",
+                "plugins-tests",
+                "android-tests",
+                ":generators:test"
+        )
+    }
 
     "test" {
         doLast {
