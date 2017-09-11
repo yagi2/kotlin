@@ -1,0 +1,10 @@
+package
+
+package test1 {
+    public fun a(): kotlin.Unit
+}
+
+package test2 {
+    public fun a(): kotlin.Unit
+    public fun b(): kotlin.Unit
+}

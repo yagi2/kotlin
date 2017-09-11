@@ -552,6 +552,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmPackageName/incorrectJvmPackageName.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("partClash.kt")
+            public void testPartClash() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmPackageName/partClash.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic")
