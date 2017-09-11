@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -220,7 +221,7 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
                 else KtTokens.DEFAULT_VISIBILITY_KEYWORD
             }
             hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
-                (resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableMemberDescriptor)
+                (resolveToDescriptorIfAny() as? CallableMemberDescriptor)
                         ?.overriddenDescriptors
                         ?.let { OverridingUtil.findMaxVisibility(it) }
                         ?.toKeywordToken()
@@ -271,7 +272,7 @@ fun KtDeclaration.isOverridable(): Boolean {
 }
 
 fun KtDeclaration.getModalityFromDescriptor(): KtModifierKeywordToken? {
-    val descriptor = this.resolveToDescriptor(BodyResolveMode.PARTIAL)
+    val descriptor = this.resolveToDescriptorIfAny()
     if (descriptor is MemberDescriptor) {
         return mapModality(descriptor.modality)
     }
