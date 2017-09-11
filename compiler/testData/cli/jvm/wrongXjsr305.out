@@ -1,0 +1,4 @@
+warning: unrecognized -Xjsr305 value: enable
+warning: unrecognized -Xjsr305 value: under-migration:stct
+warning: unrecognized -Xjsr305 value: @hello:warning
+OK

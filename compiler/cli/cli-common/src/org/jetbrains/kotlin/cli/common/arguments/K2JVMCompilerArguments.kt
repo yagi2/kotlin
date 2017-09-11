@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.ReportLevel
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -175,9 +178,41 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 
-    override fun configureAnalysisFlags(): MutableMap<AnalysisFlag<*>, Any> {
-        val result = super.configureAnalysisFlags()
-        result[AnalysisFlag.jsr305] = Jsr305State.fromArgs(jsr305)
+    override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
+        val result = super.configureAnalysisFlags(collector)
+        result[AnalysisFlag.jsr305] = parseJsr305(collector)
         return result
+    }
+
+    fun parseJsr305(collector: MessageCollector): Jsr305State {
+        var global: ReportLevel = ReportLevel.WARN
+        var migration: ReportLevel? = null
+        val userDefined = mutableMapOf<String, ReportLevel>()
+
+        jsr305?.mapNotNull { item ->
+            when {
+                item.startsWith("@") -> {
+                    val (name, rawState) = item.substring(1).split(":").takeIf { it.size == 2 }
+                                           ?: return@mapNotNull item
+                    val state = ReportLevel.findByDescription(rawState) ?: return@mapNotNull item
+
+                    userDefined[name] = state
+                }
+                item.startsWith("under-migration") -> {
+                    val (_, rawState) = item.split(":").takeIf { it.size == 2 } ?: return@mapNotNull item
+                    val state = ReportLevel.findByDescription(rawState) ?: return@mapNotNull item
+                    migration = state
+                }
+                else -> {
+                    global = ReportLevel.findByDescription(item) ?: return@mapNotNull item
+                }
+            }
+            return@mapNotNull null
+        }?.forEach {
+            collector.report(CompilerMessageSeverity.WARNING, "Unrecognized -Xjsr305 value: $it")
+        }
+
+        val state = Jsr305State(global, migration, userDefined)
+        return if (state == Jsr305State.DISABLED) Jsr305State.DISABLED else state
     }
 }

@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/simple.kt
+-d
+$TEMP_DIR$
+-Xjsr305=enable
+-Xjsr305=under-migration\:stct
+-Xjsr305=@hello\:warning
