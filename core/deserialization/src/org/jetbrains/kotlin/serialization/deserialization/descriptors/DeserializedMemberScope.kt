@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -195,15 +194,11 @@ abstract class DeserializedMemberScope protected constructor(
             result: MutableCollection<DeclarationDescriptor>,
             descriptorsByName: (Name) -> Collection<DeclarationDescriptor>
     ) {
-        val subResult = ArrayList<DeclarationDescriptor>()
         for (name in names) {
             if (nameFilter(name)) {
-                subResult.addAll(descriptorsByName(name))
+                result.addAll(descriptorsByName(name))
             }
         }
-
-        subResult.sortWith(MemberComparator.INSTANCE)
-        result.addAll(subResult)
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
