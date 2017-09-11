@@ -128,8 +128,15 @@ object LightClassUtil {
     }
 
     private fun getPsiMethodWrappers(declaration: KtDeclaration): Sequence<PsiMethod> {
-        return getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
-                .filter { method -> method is KtLightMethod && method.kotlinOrigin === declaration }
+        val wrappingClasses = getWrappingClasses(declaration)
+        val ktMethods = wrappingClasses.flatMap { it.methods.asSequence() }.filterIsInstance<KtLightMethod>()
+
+        val sameName = ktMethods.filter { method -> method.name == declaration.name && method.kotlinOrigin === declaration }.toList()
+        if (sameName.isNotEmpty()) {
+            return sameName.asSequence()
+        }
+
+        return ktMethods.filter { method -> method.kotlinOrigin === declaration }
     }
 
     private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {
