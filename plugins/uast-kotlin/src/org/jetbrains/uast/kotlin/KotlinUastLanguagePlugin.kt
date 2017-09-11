@@ -81,13 +81,13 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     }
 
     private fun tryParentAsAnnotationArgument(parent: PsiElement, uAnnotation: UAnnotation): UNamedExpression? {
-        val valueArgument = PsiTreeUtil.getParentOfType(parent, KtValueArgument::class.java, false) ?: return null
-        valueArgument.getArgumentName()?.asName?.asString()?.let { argumentName ->
-            return uAnnotation.attributeValues.find { it.name == argumentName }
-        }
-        (valueArgument.parent as? KtValueArgumentList)?.arguments?.indexOf(valueArgument)?.let { index ->
-            return uAnnotation.attributeValues.getOrNull(index)
-        }
+//        val valueArgument = PsiTreeUtil.getParentOfType(parent, KtValueArgument::class.java, false) ?: return null
+//        valueArgument.getArgumentName()?.asName?.asString()?.let { argumentName ->
+//            return uAnnotation.attributeValues.find { it.name == argumentName }
+//        }
+//        (valueArgument.parent as? KtValueArgumentList)?.arguments?.indexOf(valueArgument)?.let { index ->
+//            return uAnnotation.attributeValues.getOrNull(index)
+//        }
         return null
     }
 
