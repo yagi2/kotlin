@@ -536,7 +536,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static JsInvocation invokeSpecialFunction(
+    public static JsInvocation invokeSpecialFunction(
             @NotNull TranslationContext context,
             @NotNull SpecialFunction function, @NotNull JsExpression... arguments
     ) {

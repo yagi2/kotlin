@@ -5219,6 +5219,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inlineMultiModule.kt")
+        public void testInlineMultiModule() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/inlineMultiModule.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineMultiModuleWithController.kt")
+        public void testInlineMultiModuleWithController() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/inlineMultiModuleWithController.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineSuspendFunction.kt")
         public void testInlineSuspendFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/inlineSuspendFunction.kt");
