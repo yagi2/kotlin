@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.sun.management.HotSpotDiagnosticMXBean
 import org.intellij.lang.regexp.RegExpLanguage
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
+import java.lang.management.ManagementFactory
 
 class KotlinInjectionTest : AbstractInjectionTest() {
     fun testInjectionOnJavaPredefinedMethodWithAnnotation() = doInjectionPresentTest(
@@ -326,7 +328,13 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
     )
 
-    fun testInjectionOnInterpolationWithAnnotation() = doInjectionPresentTest(
+    fun testInjectionOnInterpolationWithAnnotation() {
+        ManagementFactory.newPlatformMXBeanProxy(
+                ManagementFactory.getPlatformMBeanServer(),
+                "com.sun.management:type=HotSpotDiagnostic",
+                HotSpotDiagnosticMXBean::class.java)
+                .dumpHeap("out/testInjectionOnInterpolationWithAnnotation${System.currentTimeMillis()}.hprof", false)
+        doInjectionPresentTest(
             """
             val b = 2
 
@@ -339,7 +347,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                     ShredInfo(range(6, 21), hostRange=range(11, 14), prefix="missingValue")
             )
     )
-
+}
     fun testInjectionOnInterpolatedStringWithComment() = doInjectionPresentTest(
             """
             val some = 42
