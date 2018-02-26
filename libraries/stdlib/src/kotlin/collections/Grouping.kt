@@ -143,7 +143,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
  *  - `element`: the element from the source being accumulated.
  *
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
- * @sample samples.collections.Grouping.foldWithConstantInitialValue
+ * @sample samples.collections.Grouping.foldByEvenLengthStringWithConstantInitialValue
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R> Grouping<T, K>.fold(
@@ -167,7 +167,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  *  - `element`: the element from the source being accumulated.
  *
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
- * @sample samples.collections.Grouping.foldWithConstantInitialValueToMap
+ * @sample samples.collections.Grouping.foldByEvenLengthStringWithConstantInitialValueToMap
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(

@@ -52,7 +52,7 @@ class Grouping {
     }
 
     @Sample
-    fun foldWithConstantInitialValue() {
+    fun foldByEvenLengthStringWithConstantInitialValue() {
         val fruits = listOf("apple", "apricot", "banana", "blueberry", "cherry", "coconut")
 
         // collect only even length Strings
@@ -63,7 +63,7 @@ class Grouping {
     }
 
     @Sample
-    fun foldWithConstantInitialValueToMap() {
+    fun foldByEvenLengthStringWithConstantInitialValueToMap() {
         val fruits = listOf("apple", "apricot", "banana", "blueberry", "cherry", "coconut")
         val evenFruits = mutableMapOf<Char, List<String>>()
 
