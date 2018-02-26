@@ -80,7 +80,7 @@ class Grouping {
     fun reduceByMaxOfContainsVowels() {
         val animals = listOf("raccoon", "reindeer", "cow", "camel", "giraffe", "goat")
 
-        // grouping by fisrt char and collect only max of contains vowels
+        // grouping by first char and collect only max of contains vowels
         val maxVowels = animals.groupingBy { it.first() }
             .reduce { _, a, b ->
                 if (a.count{ it in "aeiou" } >= b.count{ it in "aeiou" }) {
@@ -98,7 +98,7 @@ class Grouping {
         val animals = listOf("raccoon", "reindeer", "cow", "camel", "giraffe", "goat")
         val maxVowels = mutableMapOf<Char, String>()
 
-        // grouping by fisrt char and collect only max of contains vowels
+        // grouping by first char and collect only max of contains vowels
         animals.groupingBy { it.first() }
             .reduceTo(maxVowels, { _, a, b ->
                 if (a.count{ it in "aeiou" } >= b.count{ it in "aeiou" }) {
