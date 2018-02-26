@@ -36,6 +36,7 @@ public interface Grouping<T, out K> {
  *  - `first`: indicates whether it's the first `element` encountered in the group.
  *
  * @return a [Map] associating the key of each group with the result of aggregation of the group elements.
+ * @sample samples.collections.Grouping.aggregateEvenAndOdd
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R> Grouping<T, K>.aggregate(
@@ -61,6 +62,7 @@ public inline fun <T, K, R> Grouping<T, K>.aggregate(
  * then the elements being aggregated for that key are never considered as `first`.
  *
  * @return the [destination] map associating the key of each group with the result of aggregation of the group elements.
+ * @sample samples.collections.Grouping.aggregateEvenAndOddToMap
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.aggregateTo(
@@ -141,6 +143,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
  *  - `element`: the element from the source being accumulated.
  *
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.foldWithConstantInitialValue
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R> Grouping<T, K>.fold(
@@ -164,6 +167,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  *  - `element`: the element from the source being accumulated.
  *
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.foldWithConstantInitialValueToMap
  */
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
@@ -188,6 +192,7 @@ public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
  *  - `element`: the element from the source being accumulated.
  *
  * @return a [Map] associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.reduceByMaxOfContainsVowels
  */
 @SinceKotlin("1.1")
 public inline fun <S, T : S, K> Grouping<T, K>.reduce(
@@ -214,6 +219,7 @@ public inline fun <S, T : S, K> Grouping<T, K>.reduce(
  *  - `element`: the element from the source being folded;
  *
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
+ * @sample samples.collections.Grouping.reduceByMaxOfContainsVowelsToMap
  */
 @SinceKotlin("1.1")
 public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo(
